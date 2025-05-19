@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8081:8081' # Mapea exactamente el puerto que usas
+    environment:
+      - NODE_ENV=development
+      - PORT=8081
+      - FRONT_SYSTEMS_API_URL=${FRONT_SYSTEMS_API_URL}
+      - WOOCOMMERCE_API_URL=${WOOCOMMERCE_API_URL}
+      - NGROK_URL=${NGROK_URL}
+      - MONGO_URI=mongodb://mongodb:27017/fs-wc-integration
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/dist
+    depends_on:
+      - mongodb
+      - redis
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:6
+    ports:
+      - '27017:27017' # Para acceso con MongoDB Compass
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: fs-wc-integration
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379' # Puerto estándar para clients externos
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - app-network
+
+volumes:
+  mongodb_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
