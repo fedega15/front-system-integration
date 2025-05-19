@@ -8,15 +8,16 @@ services:
     ports:
       - '8081:8081' # Mapea exactamente el puerto que usas
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - PORT=8081
       - FRONT_SYSTEMS_API_URL=${FRONT_SYSTEMS_API_URL}
       - WOOCOMMERCE_API_URL=${WOOCOMMERCE_API_URL}
       - NGROK_URL=${NGROK_URL}
-      - MONGO_URI=mongodb://mongodb:27017/fs-wc-integration
+      - MONGO_URI=${MONGO_URI}
       - JWT_SECRET=${JWT_SECRET}
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
