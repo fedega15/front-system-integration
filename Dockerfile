@@ -27,6 +27,7 @@ ENV NODE_ENV=production
 ENV PORT=8081
 
 # Usuario no-root para seguridad
+RUN chown -R node:node /app
 USER node
 
 EXPOSE ${PORT}
