@@ -143,12 +143,26 @@ export class AuthService {
   }
 
   async login(username: string, password: string): Promise<string> {
+    this.logger.debug(`Attempting login for user: ${username}`);
     const user = await this.authRepository.findOne(username);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new HttpException(
-        'Credenciales incorrectas',
-        HttpStatus.UNAUTHORIZED,
-      );
+
+    if (!user) {
+      this.logger.debug(`Login failed for user ${username}: User not found.`);
+    } else {
+      this.logger.debug(`User found: ${user.username}, role: ${user.role}`);
+      const isPasswordMatch = await bcrypt.compare(password, user.password);
+      this.logger.debug(`Password comparison result for user ${username}: ${isPasswordMatch}`);
+
+      if (!isPasswordMatch) {
+         this.logger.debug(`Login failed for user ${username}: Incorrect password.`);
+      }
+
+      if (!user || !isPasswordMatch) {
+        throw new HttpException(
+          'Credenciales incorrectas',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
     }
 
     this.logger.debug('User found:', {
