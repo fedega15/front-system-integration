@@ -77,11 +77,13 @@ import { StockMovement, StockMovementSchema } from '@/modules/front-systems/stoc
       { name: StockMovement.name, schema: StockMovementSchema },
     ]),
     BullModule.forRoot({
-      connection: {
-        host: process.env.REDIS_HOST,
-        port: +process.env.REDIS_PORT,
-        password: process.env.REDIS_PASSWORD,
-      },
+      connection: process.env.REDIS_PASSWORD
+        ? {
+            host: process.env.REDIS_HOST,
+            port: parseInt(process.env.REDIS_PORT),
+            password: process.env.REDIS_PASSWORD,
+          }
+        : {},
       defaultJobOptions: {
         attempts: 3,
         removeOnComplete: 1000,
