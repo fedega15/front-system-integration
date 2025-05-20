@@ -50,8 +50,6 @@ import {
 import { FsOrderService } from '../front-systems/order/application/service/fs-order.service';
 import { WcOrderRepository } from '../woocommerce/webhooks/infrastructure/persistance/wc-order.repository';
 import { WcProductRepository } from '../woocommerce/webhooks/infrastructure/persistance/wc-product.repository';
-import { BullModule } from '@nestjs/bullmq';
-import { OrderSyncConsumer } from './application/workers/order-sync.worker';
 import { WebhookService } from '../webhook/application/service/webhook.service';
 import { ImportService } from './application/service/import.service';
 import { ImportExceptionFilter } from './application/filter/import-exception.filter';
@@ -91,17 +89,6 @@ import { WebhookRepository } from '../webhook/infrastructure/persistance/webhook
       { name: FSProduct.name, schema: FSProductSchema },
       { name: WebhookConfig.name, schema: WebhookConfigSchema },
     ]),
-    BullModule.registerQueue(
-      {
-        name: 'order-sync',
-      },
-      {
-        name: 'import-products',
-      },
-      {
-        name: 'stock-movement',
-      },
-    ),
   ],
   controllers: [
     SyncController,
@@ -120,7 +107,6 @@ import { WebhookRepository } from '../webhook/infrastructure/persistance/webhook
     WCProductRepository,
     AuthRepository,
     FsOrderService,
-    OrderSyncConsumer,
     WebhookService,
     WooCommerceCredentialsService,
     ImportService,

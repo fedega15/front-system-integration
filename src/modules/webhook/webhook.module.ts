@@ -32,12 +32,6 @@ import { WebhookTenantMiddleware } from '@/common/middleware/webhook-tenant.midd
 import { WebhookSignatureMiddleware } from '@/common/middleware/webhook-signature.middleware';
 import { AuthRepository } from '../auth/infrastructure/persistance/auth.repository';
 import { User, UserSchema } from '../auth/infrastructure/schemas/user.schema';
-import { OrderSyncConsumer } from '../sync/application/workers/order-sync.worker';
-import { BullModule } from '@nestjs/bullmq';
-import { AuthModule } from '../auth/auth.module';
-
-import { WcOrderRepository } from '../woocommerce/webhooks/infrastructure/persistance/wc-order.repository';
-import { WcProductRepository } from '../woocommerce/webhooks/infrastructure/persistance/wc-product.repository';
 import { WebhookRepository } from './infrastructure/persistance/webhook-repository';
 import {
   WebhookConfig,
@@ -45,6 +39,9 @@ import {
 } from './infrastructure/schemas/webhook-config.schema';
 import { StockMovementRepository } from '@/modules/front-systems/stock/infrastructure/persistance/stock-movement.repository';
 import { StockMovement, StockMovementSchema } from '@/modules/front-systems/stock/infrastructure/schema/stock-movement.schema';
+
+import { WcOrderRepository } from '../woocommerce/webhooks/infrastructure/persistance/wc-order.repository';
+import { WcProductRepository } from '../woocommerce/webhooks/infrastructure/persistance/wc-product.repository';
 
 @Module({
   providers: [
@@ -61,13 +58,11 @@ import { StockMovement, StockMovementSchema } from '@/modules/front-systems/stoc
     WoocommerceHttpClientService,
     FsProductRepository,
     AuthRepository,
-    OrderSyncConsumer,
     WebhookRepository,
     StockMovementRepository,
   ],
   imports: [
     StoreModule,
-    forwardRef(() => AuthModule),
     MongooseModule.forFeature([
       { name: WCOrder.name, schema: WCOrderSchema },
       { name: WcProduct.name, schema: ProductSchema },
@@ -76,31 +71,6 @@ import { StockMovement, StockMovementSchema } from '@/modules/front-systems/stoc
       { name: WebhookConfig.name, schema: WebhookConfigSchema },
       { name: StockMovement.name, schema: StockMovementSchema },
     ]),
-    BullModule.forRoot({
-      connection: process.env.REDIS_PASSWORD
-        ? {
-            host: process.env.REDIS_HOST,
-            port: parseInt(process.env.REDIS_PORT),
-            password: process.env.REDIS_PASSWORD
-          }
-        : {},
-      defaultJobOptions: {
-        attempts: 3,
-        removeOnComplete: 1000,
-        removeOnFail: 3000,
-      },
-    }),
-    BullModule.registerQueue(
-      {
-        name: 'order-sync',
-      },
-      {
-        name: 'import-products',
-      },
-      {
-        name: 'stock-movement',
-      },
-    ),
   ],
   controllers: [WebhookController],
   exports: [WebhookService],
