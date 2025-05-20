@@ -13,7 +13,8 @@ const corsOptions: CorsOptions = {
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'https://d06d-2800-2123-20c0-11b3-bd6b-955b-9047-f8f1.ngrok-free.app',
-  ],
+     'https://integration-front-end.vercel.app/',
+  ],  
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
