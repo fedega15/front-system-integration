@@ -29,6 +29,17 @@ const corsOptions: CorsOptions = {
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors(corsOptions);
+
+  // Temporal logging for incoming headers to debug CORS
+  app.use((req, res, next) => {
+    console.log('--- Incoming Request Headers ---');
+    for (const key in req.headers) {
+      console.log(`${key}: ${req.headers[key]}`);
+    }
+    console.log('----------------------------');
+    next();
+  });
+
   // app.enableCors();
 
   const configService = app.get(ConfigService);
