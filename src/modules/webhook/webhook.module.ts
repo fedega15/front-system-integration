@@ -82,6 +82,7 @@ import { StockMovement, StockMovementSchema } from '@/modules/front-systems/stoc
             host: process.env.REDIS_HOST,
             port: parseInt(process.env.REDIS_PORT),
             password: process.env.REDIS_PASSWORD,
+            username: 'default'
           }
         : {},
       defaultJobOptions: {
