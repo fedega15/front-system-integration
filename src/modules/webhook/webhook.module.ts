@@ -42,6 +42,7 @@ import { StockMovement, StockMovementSchema } from '@/modules/front-systems/stoc
 
 import { WcOrderRepository } from '../woocommerce/webhooks/infrastructure/persistance/wc-order.repository';
 import { WcProductRepository } from '../woocommerce/webhooks/infrastructure/persistance/wc-product.repository';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   providers: [
@@ -63,6 +64,7 @@ import { WcProductRepository } from '../woocommerce/webhooks/infrastructure/pers
   ],
   imports: [
     StoreModule,
+    forwardRef(() => AuthModule),
     MongooseModule.forFeature([
       { name: WCOrder.name, schema: WCOrderSchema },
       { name: WcProduct.name, schema: ProductSchema },
