@@ -1,8 +1,6 @@
 // src/modules/webhooks/webhooks.controller.ts
 import { Controller, Post, Req, Res, Body, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Queue } from 'bullmq';
-import { InjectQueue } from '@nestjs/bullmq';
 import { AuthRepository } from '@/modules/auth/infrastructure/persistance/auth.repository';
 import { User as AuthUser } from '@/modules/auth/infrastructure/schemas/user.schema';
 import { User as WebhookUser } from '../application/interface/user.interface';
@@ -14,7 +12,6 @@ export class WebhookController {
   private readonly logger = new Logger(WebhookController.name);
 
   constructor(
-    @InjectQueue('order-sync') private readonly orderSyncQueue: Queue,
     private readonly authRepository: AuthRepository,
     private readonly sensitiveDataService: SensitiveDataService,
     private readonly stockMovementRepository: StockMovementRepository,
@@ -59,12 +56,6 @@ export class WebhookController {
         authUser.WooCommerceConsumerSecret = sensitiveData.wooCommerce.consumerSecret;
         authUser.WooCommerceUrl = sensitiveData.wooCommerce.url;
       }
-
-      await this.orderSyncQueue.add('order-sync', {
-        user: authUser,
-        topic,
-        payload,
-      });
 
       res.status(200).json({ status: 'success' });
     } catch (error) {

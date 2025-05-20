@@ -27,7 +27,6 @@ services:
       - /app/dist
     depends_on:
       - mongodb
-      - redis
     restart: unless-stopped
     networks:
       - app-network
@@ -44,19 +43,8 @@ services:
     networks:
       - app-network
 
-  redis:
-    image: redis:alpine
-    ports:
-      - '6379:6379' # Puerto estándar para clients externos
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
-    networks:
-      - app-network
-
 volumes:
   mongodb_data:
-  redis_data:
 
 networks:
   app-network:
